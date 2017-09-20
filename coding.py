@@ -54,12 +54,15 @@ for online in range(0,2918):
 	    print("add edge success!!")
 #np.savetxt(finalpath,final,delimiter=',')           #use this command to save csv file only use the float data
 
+#print(sorted(nx.degree(G).values(),reverse=True))
+#print(len(nx.degree(G).values()))
+
 #plt.figure()
 #plt.plot(final[0][1:],linewidth=0.1)
 #plt.savefig("../images/show.png",dpi=1000)
 #plt.show()
-nx.draw(G,width=0.1,with_labels=False,node_size=6)
-plt.savefig("../images/net.png")
+nx.draw(G,width=0.1,with_labels=False,node_size=36)
+plt.savefig("../images/netsize36.png",dpi=1000)
 plt.show()
 
 print("success")
