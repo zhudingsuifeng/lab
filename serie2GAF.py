@@ -9,10 +9,12 @@ Modified on Tue Sep 19 19:57:29 2017
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import os
+import csv
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import  sys
 
-#PAA function
+#Piecewise Aggregation Approximation(PAA) function
 def paa(series, now, opw):
     if now == None:
         now = len(series) / opw
@@ -25,152 +27,106 @@ def standardize(serie):
     mean = np.mean(serie)
     return [(each-mean)/dev for each in serie]
 
-#Rescale data into [0,1]
-def rescale(serie):
+#Rescale data into [0,1] or [-1,1] or original
+def rescale(serie,Type):
     maxval = max(serie)
     minval = min(serie)
     gap = float(maxval-minval)
-    return [(each-minval)/gap for each in serie]
+    if Type=='Zero':
+        return [(each-minval)/gap for each in serie]
+    elif Type=='Minusone':
+	return [(each-minval)/gap*2-1 for each in serie]
+    elif Type=='None':
+	return serie 
+    else:
+	sys.exit("Unknown rescaling type!")
 
-#Rescale data into [-1,1]    
-def rescaleminus(serie):
-    maxval = max(serie)
-    minval = min(serie)
-    gap = float(maxval-minval)
-    return [(each-minval)/gap*2-1 for each in serie]
+#get stock code from file "filename" and return stock code as a list.
+def get_stock_code(filename):
+    with open(filename) as csvf:
+	stock_code=[]
+	reader=csv.reader(csvf)
+	for row in reader:
+	    stock_code.append(row[0])
+	return stock_code
 
-#Generate quantile bins
-def QMeq(series, Q):
-    q = pd.qcut(list(set(series)), Q)
-    dic = dict(zip(set(series), q.labels))
-    MSM = np.zeros([Q,Q])
-    label = []
-    for each in series:
-        label.append(dic[each])
-    for i in range(0, len(label)-1):
-        MSM[label[i]][label[i+1]] += 1
-    for i in xrange(Q):
-        if sum(MSM[i][:]) == 0:
-            continue
-        MSM[i][:] = MSM[i][:]/sum(MSM[i][:])
-    return np.array(MSM), label, q.levels
+#save image as "filename" from 2-D array,"array.ndim" can check the dimension of the array
+def save_image(Type,filename,data):
+    path=os.path.join('../',Type,filename,'.png')
+    plt.imsave(path,data,format="png")
 
-#Generate quantile bins when equal values exist in the array (slower than QMeq)
-def QVeq(series, Q):
-    q = pd.qcut(list(set(series)), Q)
-    dic = dict(zip(set(series), q.labels))
-    qv = np.zeros([1,Q])
-    label = []
-    for each in series:
-        label.append(dic[each])
-    for i in range(0,len(label)):
-        qv[0][label[i]] += 1.0        
-    return np.array(qv[0][:]/sum(qv[0][:])), label
+#Calculate GAF matrix form time series
+def GAF(data,Type):
+    datacos=np.array(data)
+    datasin=np.sqrt(1-np.array(data)**2)#np.array()create an array
+    matcos=np.matrix(datacos)    #np.matrix(data),return a matrix from an array-like object.
+    matsin=np.matrix(datasin)
+    if Type=='GASF':
+	matrix=np.array(matcos.T*matcos-matsin.T*matsin)
+    elif Type=='GADF':
+	matrix=np.array(matsin.T*matcos-matcos.T*matsin)
+    else:
+	sys.exit('Unknown type!')
+    return matrix
 
-#Generate Markov Matrix given a spesicif number of quantile bins
-def paaMarkovMatrix(paalist,level):
-    paaindex = []
-    for each in paalist:    
-        for k in range(len(level)):
-            lower = float(level[k][1:-1].split(',')[0])
-            upper = float(level[k][1:-1].split(',')[-1])
-            if each >=lower and each <= upper:
-                paaindex.append(k)
-    return paaindex
+#
+def QM(series,Q):
+    print("success")
+
+#
+def MTF(data,Q):
+    print("success")
+
 
 #################################
 ###Define the parameters here####
 #################################
 if __name__=="__main__":
-    datafiles = ['../data/changefile.csv'] # Data fine name
-    trains = [28] # Number of training instances (because we assume training and test data are mixed in one file)
-    size = [64]  # PAA size
-    GAF_type = 'GADF' # GAF type: GASF, GADF
+    #size = [64]  # PAA size
+    size=64
     save_PAA = True # Save the GAF with or without dimension reduction by PAA: True, False
     rescale_type = 'Zero' # Rescale the data into [0,1] or [-1,1]: Zero, Minusone 
+    datafile='../data/changefile.csv'
+    #for s in size:  
+    raw = open(datafile).readlines()
+    raw = [map(float, each.strip().split(',')) for each in raw]
+    length = len(raw[0])-1
+            
+    image = []
+    paaimage = []
+    patchimage = []
+    for each in raw:
+	Zerodata=rescale(each[1:],'Zero')
+	Minusonedata=rescale(each[1:],'Minusone')
+	Nonedata=rescale(each[1:],'None')
 
-    for datafile, train in zip(datafiles,trains):
-        fn = datafile
-        for s in size:  
-            print 'read file', datafile, 'size',s, 'GAF type', GAF_type
-            raw = open(fn).readlines()
-            raw = [map(float, each.strip().split(',')) for each in raw]
-            length = len(raw[0])-1
-      
-            label = []
-            image = []
-            paaimage = []
-            patchimage = []
-            matmatrix = []
-            fullmatrix = []
-            for each in raw:
-                label.append(each[0])
-                if rescale_type == 'Zero':
-                    std_data = rescale(each[1:])
-                elif rescale_type == 'Minusone':
-                    std_data = rescaleminus(each[1:])
-                else:
-                    sys.exit('Unknown rescaling type!')
-                paalistcos = paa(std_data,s,None) 
+        paalistcos = paa(Zerodata,size,None) 
             
-                ################raw###################                
-                datacos = np.array(std_data)
-                datasin = np.sqrt(1-np.array(std_data)**2)
-
-                paalistcos = np.array(paalistcos)
-                paalistsin = np.sqrt(1-paalistcos**2)
-            
-                datacos = np.matrix(datacos)
-                datasin = np.matrix(datasin)            
-            
-                paalistcos = np.matrix(paalistcos)
-                paalistsin = np.matrix(paalistsin)            
-                if GAF_type == 'GASF':
-                    paamatrix = paalistcos.T*paalistcos-paalistsin.T*paalistsin
-                    matrix = np.array(datacos.T*datacos-datasin.T*datasin)
-                elif GAF_type == 'GADF':
-                    paamatrix = paalistsin.T*paalistcos-paalistcos.T*paalistsin
-                    matrix = np.array(datasin.T*datacos - datacos.T*datasin)
-                else:
-                    sys.exit('Unknown GAF type!')
-                paamatrix = np.array(paamatrix)
-                image.append(matrix)
-                paaimage.append(np.array(paamatrix))
-                matmatrix.append(paamatrix.flatten())
-                fullmatrix.append(matrix.flatten())
+        ################raw################### 
+	GASFmatrix=GAF(Zerodata,'GASF')    #Without reduce the image size.GAFmatrix is a 2-D array.
+	GADFmatrix=GAF(Zerodata,'GADF')
+	GASFpaamatrix=GAF(paalistcos,'GASF')#Reduce image size used Piecewise Aggregation Approximation(PAA)
+	GADFpaamatrix=GAF(paalistcos,'GADF')
+               
+        image.append(GASFmatrix)       #image is a 3-D array.
+	print(type(GASFmatrix),GASFmatrix.ndim,'!!!!')
+        paaimage.append(GASFpaamatrix)
+	print(type(GASFpaamatrix),GASFpaamatrix.ndim,'-------------')
     
-            label = np.asarray(label)
-            image = np.asarray(image)
-            paaimage = np.asarray(paaimage)
-            patchimage = np.asarray(patchimage)
-            matmatrix = np.asarray(matmatrix)
-            fullmatrix = np.asarray(fullmatrix)
-        
-            if save_PAA == False:        
-                finalmatrix = matmatrix
-            else:
-                finalmatrix = fullmatrix
-
-    # polar coordinates
-    k=0;
-    r = np.array(range(1,length+1));
-    r=r/100.0;
-    theta = np.array(rescale(raw[k][1:]))*2*np.pi;
-
-    #plt.figure();
-    #plt.plot(theta, r, color='r', linewidth=3);
-    #plt.show()
-
+    image = np.asarray(image)        #Convert the input to an array.Input should be the array_like.         
+    paaimage = np.asarray(paaimage)
+    print(type(image),image.ndim,'???????????????')
+    '''
     ## draw large image and paa image
-    plt.figure();
-    plt.title(GAF_type + 'with PAA');
-    ax=plt.subplot(111)
-    #print(type(ax),ax)
-    #bx=plt.plot(paaimage[k])
-    #print(type(bx),bx)
-    plt.imshow(paaimage[k]);
-    divider=make_axes_locatable(ax)
-    cax=divider.append_axes("right",size="5%",pad=0.2)
-    plt.colorbar(cax=cax)
-    plt.show()
+    k=0
+    #plt.axis('off')
+    with open("../data/changefile.csv") as csvf:
+	reader=csv.reader(csvf)
+	for row in reader:
+	    path=os.path.join("../GASF",row[0],".png")
+	    print(path,paaimage[k])
+	    k+=1
+            #plt.imsave("test.png",paaimage[k],format="png")#imsave(data)required data is 2-D array
+	print(type(paaimage[0]),paaimage[0].ndim)
+    '''
     print("success")
