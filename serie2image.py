@@ -80,7 +80,8 @@ def MTF(series,Q,Type,size=64):
 	MSM[label[i]][label[i+1]]+=1
     for i in xrange(Q):           
 	if sum(MSM[i][:])==0:         #Prevent denominator from zero  
-	    continue
+	    MSM[i][:]=1.0/Q
+	     #continue
 	MSM[i][:]=MSM[i][:]/sum(MSM[i][:])#Normalized the markov matrix
     for p in range(len(series)):      #create the MTF matrix
 	for q in range(len(series)):
