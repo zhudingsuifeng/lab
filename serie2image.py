@@ -4,6 +4,7 @@
 Created on Tue Aug 12 11:17:18 2014
 Modified on Tue Sep 19 19:57:29 2017
 @author: Fly
+Convert times series to GASF,GADF,MTF images,and combine GASF,GADF and MTF to RGB images.
 """
 
 import numpy as np
@@ -11,7 +12,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os
 import csv
-import  sys
+import sys
 
 #Piecewise Aggregation Approximation(PAA) function.In fact,is a way to reduce the average dimension.
 def paa(series, now, opw):
@@ -125,6 +126,7 @@ if __name__=="__main__":
     GASFimage = []
     GADFimage = []
     MTFimage = []
+    RGBimage = []
     paaimage = []
     patchimage = []
     for each in raw:
@@ -133,37 +135,49 @@ if __name__=="__main__":
 	Nonedata=rescale(each[1:],'None')
 
         paalistcos = paa(Zerodata,size,None) 
-        paalist = paa(Nonedata,size,None)
+        paalist = paa(Nonedata,size,None);print("PAA")
     
         ################raw################### 
 	GASFmatrix=GAF(Zerodata,'GASF')    #Without reduce the image size.GAFmatrix is a 2-D array.
 	GADFmatrix=GAF(Zerodata,'GADF')
 	GASFpaamatrix=GAF(paalistcos,'GASF')#Reduce image size used Piecewise Aggregation Approximation(PAA)
-	GADFpaamatrix=GAF(paalistcos,'GADF')
+	GADFpaamatrix=GAF(paalistcos,'GADF');print("GAF")
         
 	MTFmatrix=MTF(each[1:],Q,'None')
 	MTFPAAmatrix=MTF(each[1:],Q,'PAA')
-	MTFPATCHmatrix=MTF(each[1:],Q,'PATCH')
-       
+	MTFPATCHmatrix=MTF(each[1:],Q,'PATCH');print("MTF")
+      
+	RGBmatrix=np.zeros([length,length,3])
+	for i in range(0,length):
+	    for k in range(0,length):
+		RGBmatrix[i][k][0]=GASFmatrix[i][k]
+		RGBmatrix[i][k][1]=GADFmatrix[i][k]
+		RGBmatrix[i][k][2]=MTFmatrix[i][k]
+	print("RGB")
+	
         GASFimage.append(GASFmatrix)       #image is a 3-D array.
 	GADFimage.append(GADFmatrix)
 	MTFimage.append(MTFmatrix)
+	RGBimage.append(RGBmatrix)
     
     GASFimage = np.asarray(GASFimage)     #Convert the input to an array.Input should be the array_like.  
     GADFimage = np.asarray(GADFimage)
     MTFimage = np.asarray(MTFimage)
+    RGBimage = np.asarray(RGBimage);print("images")
 
     ## draw large image and paa image
+    #csvf=open("../data/changefile.csv").readlines()
     with open("../data/changefile.csv") as csvf:
 	k=0
 	reader=csv.reader(csvf)
-	for row in reader:
+        for row in reader:
 	    GASFpath=os.path.join("../GASF",row[0]+".png")
 	    GADFpath=os.path.join("../GADF",row[0]+".png")
 	    MTFpath=os.path.join("../MTF",row[0]+".png")
+	    RGBpath=os.path.join("../RGB",row[0]+".png")
             plt.imsave(GASFpath,GASFimage[k],format="png")#imsave(data)required data is 2-D array
 	    plt.imsave(GADFpath,GADFimage[k],format="png")
 	    plt.imsave(MTFpath,MTFimage[k],format="png")
-	    k+=1
+	    plt.imsave(RGBpath,RGBimage[k],format="png")
 	    print("save "+row[0]+" sucess!!!!")
     print("success")
