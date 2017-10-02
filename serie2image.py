@@ -180,4 +180,5 @@ if __name__=="__main__":
 	    plt.imsave(MTFpath,MTFimage[k],format="png")
 	    plt.imsave(RGBpath,RGBimage[k],format="png")
 	    print("save "+row[0]+" sucess!!!!")
+	    k+=1
     print("success")

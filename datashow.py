@@ -17,45 +17,28 @@ import networkx as nx
 import pandas as pd
 
 #compare image similarity
-def compare(imagedir):
-    ssimarray=[]
-    psnrarray=[]
-    nrmsearray=[]
-    filelist=os.listdir(imagedir)      #list files of the dir
-    for imdir in range(0,len(filelist)):
-	imagepath=os.path.join(imagedir,filelist[imdir]) #combine the file path
-	original=cv2.imread(imagepath)    #load the images
-	#original=cv2.cvtColor(original,cv2.COLOR_BGR2GRAY) #convert the image to grayscale
-	for secimdir in range(0,len(filelist)):
-	    secimagepath=os.path.join(imagedir,filelist[secimdir])
-	    secimage=cv2.imread(secimagepath)
-	    #secimage=cv2.cvtColor(secimage,cv2.COLOR_BGR2GRAY)
-	    ssimvalue=sm.compare_ssim(original,secimage,multichannel=True)   #ssim
-	    psnrvalue=sm.compare_psnr(original,secimage)                     #psnr  
-	    nrmsevalue=sm.compare_nrmse(original,secimage)                    #nrmse   
-	    print(filelist[secimdir]+" complete!")
-	    ssimarray.append(ssimvalue)
-	    psnrarray.append(psnrvalue)
-	    nrmsearray.append(nrmsevalue)
-	print("one success!")
-	break
-    return ssimarray,psnrarray,nrmsearray
+def getSSIM(SSIM):
+    path=os.path.join('../data',SSIM) #combine the file path
+    ssim=np.load(path)    #load the npy file
+    return ssim[0][1:]
 
 if __name__=="__main__":
     wn.filterwarnings("ignore")
 
     temp='../temp'
-    nrmse=[]     #nrmse
-    psnr=[]      #psnr
-    ssim=[]      #ssim
-    ssim,psnr,nrmse=compare('../GADF')
+    RGB=getSSIM('RGBssim.npy')
+    GASF=getSSIM('GASFssim.npy')
+    GADF=getSSIM('GADFssim.npy')
+    MTF=getSSIM('MTFssim.npy')
+    print(RGB)
     plt.figure()
-    plt.title('GADF')
-    plt.plot(ssim,color="red",linewidth=1,label="ssim")
-    plt.plot(psnr,color="blue",linewidth=1,label="psnr")
-    plt.plot(nrmse,color="yellow",linewidth=1,label="nrmse")
+    plt.title('SSIM')
+    plt.plot(GASF,color="red",linewidth=1,label="GASF")
+    plt.plot(GADF,color="blue",linewidth=1,label="GADF")
+    plt.plot(MTF,color="yellow",linewidth=1,label="MTF")
+    plt.plot(RGB,color="green",linewidth=1,label="RGB")
     plt.legend(loc='upper left')
-    plt.savefig('GADF.png',dpi=1000)
+    plt.savefig('SSIM.png',dpi=1000)
     plt.show()
     #ssim,psnr,nrmse=compare('../GADF')
     #ssim,psnr,nrmse=compare('../MTF')

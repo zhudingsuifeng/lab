@@ -53,7 +53,7 @@ def compare(imagedir):
 	    ssimvalue=sm.compare_ssim(original,secimage,multichannel=True)   #ssim
 	    psnrvalue=sm.compare_psnr(original,secimage)                     #psnr  
 	    nrmsevalue=sm.compare_nrmse(original,secimage)                    #nrmse   
-	    print(filelist[secimdir]+" complete!")
+	    print(filelist[secimdir]+" complete!ssim value is "+str(ssimvalue))
 	    ssimarray[imdir].append(ssimvalue)
 	    psnrarray[imdir].append(psnrvalue)
 	    nrmsearray[imdir].append(nrmsevalue)
@@ -71,11 +71,13 @@ if __name__=="__main__":
     phash=[]     #phash
     sift=[]      #sift
     cbir=[]      #cbir
-    ssim,psnr,nrmse=compare('../GASF')
-    save(ssim,psnr,nrmse,temp,"GASF")
-    ssim,psnr,nrmse=compare('../GADF')
-    save(ssim,psnr,nrmse,temp,"GADF")
-    ssim,psnr,nrmse=compare('../MTF')
-    save(ssim,psnr,nrmse,temp,"MTF")
+    #ssim,psnr,nrmse=compare('../GASF')
+    #save(ssim,psnr,nrmse,temp,"GASF")
+    #ssim,psnr,nrmse=compare('../GADF')
+    #save(ssim,psnr,nrmse,temp,"GADF")
+    #ssim,psnr,nrmse=compare('../MTF')
+    #save(ssim,psnr,nrmse,temp,"MTF")
+    ssim,psnr,nrmse=compare('../RGB')
+    save(ssim,psnr,nrmse,temp,"RGB")
 
     print("success")
