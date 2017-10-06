@@ -4,6 +4,11 @@
 Create on Sun Oct 1 21:21:55 2017
 @author: fly
 A library of functions for compare image similarity and build complex networks.
+opencv3.3.0
+numpy1.13.1
+pandas0.20.3
+PIL4.2.1
+skimage0.13.0
 """
 import os
 import csv
