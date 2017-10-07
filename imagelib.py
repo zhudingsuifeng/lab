@@ -63,7 +63,7 @@ def aHash(path):
 #perceptual hash algorithm,get image pHash value
 def pHash(path):
     #reconvert image to 32*32 gray image
-    img=cv2.imread(path,cv2.CV_LOAD_IMAGE_GRAYSCALE)
+    img=cv2.imread(path,0)
     img=cv2.resize(img,(32,32),interpolation=cv2.INTER_CUBIC)
     #create 2-d list
     h,w=img.shape[:2]
@@ -79,7 +79,7 @@ def pHash(path):
 
 #get image dHash value
 def dHash(path):
-    img=cv2.imread(path,cv2.CV_LOAD_IMAGE_GRAYSCALE)
+    img=cv2.imread(path,0)
     img=cv2.resize(img,(9,8),interpolation=cv2.INTER_CUBIC)
     img=np.int8(img)#int type,out of range is negative number.
     img_diff=img[:,:-1]-img[:,1:]   #get value,-1 is the last, but list get value is [).
@@ -91,8 +91,8 @@ def dHash(path):
 def histsim(hista,histb):
     degree=0
     for i in range(len(hista)):
-	if hista[i]!=histb[i]:
-	    degree+=(1-abs(hista[i]-histb[i])/max(hista[i],histb[i]))
+	if hista[i][0]!=histb[i][0]:
+	    degree+=(1-abs(hista[i][0]-histb[i][0])/max(hista[i][0],histb[i][0]))
 	else:
 	    degree+=1
     degree=degree/len(hista)
@@ -210,10 +210,13 @@ def ORBORB(patha,pathb):
     imga=cv2.imread(patha,0)
     imgb=cv2.imread(pathb,0)
     #Initiate ORB detector
-    orb=cv2.ORB()
+    orb=cv2.ORB_create()
     #find the keypoints and descriptors with ORB
     kpa,desa=orb.detectAndCompute(imga,None)
     kpb,desb=orb.detectAndCompute(imgb,None)
+    if len(kpa)==0 or len(kpb)==0:
+	print("don't detect feature points")
+	return 0
     good=flannKnnMatcher(desa,desb,'corner')
     #good=bfKnnMatcher(desa,desb)
     return good/float(max(len(kpa),len(kpb)))
@@ -244,22 +247,60 @@ def flannKnnMatcher(desa,desb,Type):
     flann=cv2.FlannBasedMatcher(index_params,search_params)
     matches=flann.knnMatch(desa,desb,k=2)
     good=[]
-    for m,n in matches:
-	if m.distance<0.96*n.distance:
-	    good.append([m])
+    for m in matches:
+	if len(m)==2:
+	    if m[0].distance<0.96*m[1].distance:
+		good.append([m[0]])
     return len(good)
+
+#compare image similarity
+def compare(imagedir):
+    surfsift=[]
+    siftsift=[]
+    orborb=[]
+    phashham=[]
+    histsim=[]
+    filelist=os.listdir(imagedir)
+    for name in range(0,len(filelist)):
+	(shortname,extension)=os.path.splitext(filelist[name])
+	surfsift.append([shortname])
+	siftsift.append([shortname])
+	orborb.append([shortname])
+	phashham.append([shortname])
+	histsim.append([shortname])
+    for imdir in range(0,len(filelist)):
+	imagepath=os.path.join(imagedir,filelist[imdir])
+	serieA=pHash(imagepath)
+	for secimdir in range(0,len(filelist)):
+	    secimagepath=os.path.join(imagedir,filelist[secimdir])
+	    surfsiftvalue=SURFSIFT(imagepath,secimagepath)
+	    siftsiftvalue=SIFTSIFT(imagepath,secimagepath)
+	    orborbvalue=ORBORB(imagepath,secimagepath)
+	    serieB=pHash(secimagepath)
+	    phashvalue=hamming(serieA,serieB)
+	
+	    histvalue=histRGB(imagepath,secimagepath)
+	    #histvalue=histGRAY(imagepath,secimagepath)
+	    print(filelist[secimdir]+" complete!")
+
+	    surfsift[imdir].append(surfsiftvalue)
+	    siftsift[imdir].append(siftsiftvalue)
+	    orborb[imdir].append(orborbvalue)
+	    histsim[imdir].append(histvalue)
+	    phashham[imdir].append(phashvalue)
+	print("one success!")
+    return surfsift,siftsift,orborb,histsim,phashham
+
+#save compare result to file 
+def save(surfsift,siftsift,orborb,histsim,phashham,savedir,title):
+    for value,cate in (surfsift,'surfsift'),(siftsift,'siftsift'),(orborb,'orborb'),(histsim,'histsim'),(phashham,'phashham'):
+	path=os.path.join(savedir,title+cate+".npy")
+	np.save(path,value)
+    print("Save "+title+" success!")
 
 if __name__=="__main__":
     wn.filterwarnings("ignore")
     print("Test case.")
-    #print(sys.argv[0]) get first parameter of input.
-    #a=histogram('../MTF/000001.png','gray')
-    #b=histogram('../RGB/000001.png','RGB')
-    #b=dHash('../MTF/000002.png')
-    #print(hamming(a,b))
-    a=HARRISSIFT('../RGB/000001.png','../RGB/000002.png')
-    b=SIFTSIFT('../RGB/000001.png','../RGB/000002.png')
-    print(a)
-    #b=histRGB('../RGB/000001.png','../RGB/000002.png')
-    #print(b)
+    surfsift,siftsift,orborb,histsim,phashham=compare('../RGB')
+    save(surfsift,siftsift,orborb,histsim,phashham,"RGB")
     print("success")
