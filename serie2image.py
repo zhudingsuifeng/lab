@@ -5,6 +5,12 @@ Created on Tue Aug 12 11:17:18 2014
 Modified on Tue Sep 19 19:57:29 2017
 @author: Fly
 Convert times series to GASF,GADF,MTF images,and combine GASF,GADF and MTF to RGB images.
+matplotlib(2.0.2)
+networkx(2.0)
+numpy(1.13.3)
+opencv-python(3.3.0.10)
+pandas(0.20.3)
+Pillow(4.3.0)
 """
 
 import numpy as np
@@ -131,22 +137,22 @@ if __name__=="__main__":
     patchimage = []
     for each in raw:
 	Zerodata=rescale(each[1:],'Zero')
-	Minusonedata=rescale(each[1:],'Minusone')
-	Nonedata=rescale(each[1:],'None')
+	#Minusonedata=rescale(each[1:],'Minusone')
+	#Nonedata=rescale(each[1:],'None')
 
-        paalistcos = paa(Zerodata,size,None) 
-        paalist = paa(Nonedata,size,None);print("PAA")
+        #paalistcos = paa(Zerodata,size,None) 
+        #paalist = paa(Nonedata,size,None);print("PAA")
     
         ################raw################### 
 	GASFmatrix=GAF(Zerodata,'GASF')    #Without reduce the image size.GAFmatrix is a 2-D array.
 	GADFmatrix=GAF(Zerodata,'GADF')
-	GASFpaamatrix=GAF(paalistcos,'GASF')#Reduce image size used Piecewise Aggregation Approximation(PAA)
-	GADFpaamatrix=GAF(paalistcos,'GADF');print("GAF")
+	#GASFpaamatrix=GAF(paalistcos,'GASF')#Reduce image size used Piecewise Aggregation Approximation(PAA)
+	#GADFpaamatrix=GAF(paalistcos,'GADF');print("GAF")
         
 	MTFmatrix=MTF(each[1:],Q,'None')
-	MTFPAAmatrix=MTF(each[1:],Q,'PAA')
-	MTFPATCHmatrix=MTF(each[1:],Q,'PATCH');print("MTF")
-      
+	#MTFPAAmatrix=MTF(each[1:],Q,'PAA')
+	#MTFPATCHmatrix=MTF(each[1:],Q,'PATCH');print("MTF")
+	
 	RGBmatrix=np.zeros([length,length,3])
 	for i in range(0,length):
 	    for k in range(0,length):
@@ -164,7 +170,6 @@ if __name__=="__main__":
     GADFimage = np.asarray(GADFimage)
     MTFimage = np.asarray(MTFimage)
     RGBimage = np.asarray(RGBimage);print("images")
-
     ## draw large image and paa image
     #csvf=open("../data/changefile.csv").readlines()
     with open("../data/changefile.csv") as csvf:
