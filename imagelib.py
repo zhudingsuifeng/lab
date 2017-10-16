@@ -9,6 +9,7 @@ numpy1.13.1
 pandas0.20.3
 PIL4.2.1
 skimage0.13.0
+matplotlib(2.0.2)
 """
 import os
 import csv
@@ -302,5 +303,5 @@ if __name__=="__main__":
     wn.filterwarnings("ignore")
     print("Test case.")
     surfsift,siftsift,orborb,histsim,phashham=compare('../RGB')
-    save(surfsift,siftsift,orborb,histsim,phashham,"RGB")
+    save(surfsift,siftsift,orborb,histsim,phashham,'../data',"RGB")
     print("success")

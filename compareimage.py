@@ -71,12 +71,12 @@ if __name__=="__main__":
     phash=[]     #phash
     sift=[]      #sift
     cbir=[]      #cbir
-    #ssim,psnr,nrmse=compare('../GASF')
-    #save(ssim,psnr,nrmse,temp,"GASF")
-    #ssim,psnr,nrmse=compare('../GADF')
-    #save(ssim,psnr,nrmse,temp,"GADF")
-    #ssim,psnr,nrmse=compare('../MTF')
-    #save(ssim,psnr,nrmse,temp,"MTF")
+    ssim,psnr,nrmse=compare('../GASF')
+    save(ssim,psnr,nrmse,temp,"GASF")
+    ssim,psnr,nrmse=compare('../GADF')
+    save(ssim,psnr,nrmse,temp,"GADF")
+    ssim,psnr,nrmse=compare('../MTF')
+    save(ssim,psnr,nrmse,temp,"MTF")
     ssim,psnr,nrmse=compare('../RGB')
     save(ssim,psnr,nrmse,temp,"RGB")
 
