@@ -60,7 +60,7 @@ for i in range(0,len(stockcode)):
     ax2.imshow(gasfmatrix)     #imshow(),input is matrix
     imagepath=os.path.join(imagedir,stockcode[i]+'.png')
     plt.savefig(imagepath)
-    #plt.show()
+    plt.close()
     print(imagepath+'success!!!')
     
 print("success")
