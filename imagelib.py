@@ -3,7 +3,7 @@
 """
 Create on Sun Oct 1 21:21:55 2017
 @author: fly
-A library of functions for compare image similarity and build complex networks.
+A library of functions for compare image similarity and build complex networks.very time consuming.
 opencv3.3.0
 numpy1.13.1
 pandas0.20.3
@@ -299,9 +299,13 @@ def save(surfsift,siftsift,orborb,histsim,phashham,savedir,title):
 	np.save(path,value)
     print("Save "+title+" success!")
 
+
 if __name__=="__main__":
     wn.filterwarnings("ignore")
     print("Test case.")
     surfsift,siftsift,orborb,histsim,phashham=compare('../RGB')
+    #surfsift=compare('../RGB')
     save(surfsift,siftsift,orborb,histsim,phashham,'../data',"RGB")
+    #path=os.path.join('../data',"RGBsurfsift.npy")
+    #np.save(path,surfsift)
     print("success")
