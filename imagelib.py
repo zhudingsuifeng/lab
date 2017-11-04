@@ -24,25 +24,6 @@ import pandas as pd
 from PIL import Image
 from compiler.ast import flatten
 
-#Encoding the change price to compare the trend of the ups and downs.
-def encoding(path):   #input is a file ,file format ['stockcode',2.0,-3.0,...]
-    encoding=[]
-    with open(path) as csvf:
-	reader=csv.reader(csvf)
-	i=0
-	for row in reader:
-	    encoding.append([row[0]])
-	    for col in range(1,len(row)):
-		if(float(row[col])==0):
-		    encoding[i].append(0)
-		elif(float(row[col])>0):
-		    encoding[i].append(1)
-		else:
-		    encoding[i].append(-1)
-	    i+=1
-    csvf.close()
-    return encoding        #return encoding 2-D array ,format as to input file.
-
 #compute the hamming distance.
 def hamming(serieA,serieB):#input serie is int type.
     #print(serieA)
@@ -51,7 +32,6 @@ def hamming(serieA,serieB):#input serie is int type.
     binserie=bin(serieA^serieB)  #bin the serie.
     distance=binserie.count('1')  #distance of two series.
     return 1-distance/float((len(binserie)-2))    #return similarity of two series.'-2' because of bin has ob ahead.
-
 
 #mean hash,get image hash string
 def aHash(path):
@@ -113,19 +93,10 @@ def histRGB(patha,pathb):
     degree=degree/3.
     return degree
 
-#get color histogram from GRAY images.
-def histGRAY(patha,pathb):
-    imga=cv2.imread(patha,0)
-    imgb=cv2.imread(pathb,0)
-    hista=cv2.calcHist([imga],[0],None,[256],[0,256])#fastest
-    histb=cv2.calcHist([imgb],[0],None,[256],[0,256])
-    degree=histsim(hista,histb)
-    return degree
-
 #FAST+SIFT
 def FASTSIFT(patha,pathb):
     imga=cv2.imread(patha,0)
-    imgb=cv2.imread(pathb,0)
+    imgb=cv2.imread(pathb,0)      #RGB->GRAY ,Y<-0.299R+0.587G+0.114B
     #Initiate FAST object with default values
     fast=cv2.FastFeatureDetector_create()
     #fast=cv2.FastFeatureDetector()#AttributeError:'module' object has no attribute 'FastFeatureDetector'
@@ -139,7 +110,7 @@ def FASTSIFT(patha,pathb):
 
 #HARRIS+SIFT (goodFeaturesToTrack)
 def HARRISSIFT(patha,pathb):
-    imga=cv2.imread(patha,0)
+    imga=cv2.imread(patha,0)      #RGB->GRAY ,Y<-0.299R+0.587G+0.114B
     imgb=cv2.imread(pathb,0)
     #kpa=cv2.cornerHarris(imga,2,3,0.04)#cornerHarris()return the Harris response as the narray ,size as the img.
     gftt=cv2.GFTTDetector_create()#Initiate the GFTTDetector,use the Harris principle,for unified interface.
@@ -153,7 +124,7 @@ def HARRISSIFT(patha,pathb):
 
 #SURF+SIFT
 def SURFSIFT(patha,pathb):
-    imga=cv2.imread(patha,0)
+    imga=cv2.imread(patha,0)        #RGB->GRAY ,Y<-0.299R+0.587G+0.114B
     imgb=cv2.imread(pathb,0)
     #Initiate SURF detector.
     surf=cv2.xfeatures2d.SURF_create()#create the surf object.
@@ -167,7 +138,7 @@ def SURFSIFT(patha,pathb):
 
 #MSER+SIFT
 def MSERSIFT(patha,pathb):
-    imga=cv2.imread(patha,0)
+    imga=cv2.imread(patha,0)    #RGB->GRAY ,Y<-0.299R+0.587G+0.114B
     imgb=cv2.imread(pathb,0)
     #Initiate MSER detector.
     mser=cv2.MSER_create()
@@ -181,7 +152,7 @@ def MSERSIFT(patha,pathb):
 
 #STAR+SIFT
 def STARSIFT(patha,pathb):
-    imga=cv2.imread(patha,0)
+    imga=cv2.imread(patha,0)    #RGB->GRAY ,Y<-0.299R+0.587G+0.114B
     imgb=cv2.imread(pathb,0)
     #Initiate STAR detector.
     star=cv2.xfeatures2d.StarDetector_create()#create the star object.
@@ -198,7 +169,7 @@ def STARSIFT(patha,pathb):
 
 #SIFT+SIFT
 def SIFTSIFT(patha,pathb):
-    imga=cv2.imread(patha,0)
+    imga=cv2.imread(patha,0)   #RGB->GRAY ,Y<-0.299R+0.587G+0.114B
     imgb=cv2.imread(pathb,0)
     sift=cv2.xfeatures2d.SIFT_create()#create the sift object,different to others.
     kpa,desa=sift.detectAndCompute(imga,None)
@@ -209,7 +180,7 @@ def SIFTSIFT(patha,pathb):
 #ORB+ORB+BForFLANN
 def ORBORB(patha,pathb):
     imga=cv2.imread(patha,0)
-    imgb=cv2.imread(pathb,0)
+    imgb=cv2.imread(pathb,0)  #RGB->GRAY ,Y<-0.299R+0.587G+0.114B
     #Initiate ORB detector
     orb=cv2.ORB_create()
     #find the keypoints and descriptors with ORB
@@ -281,7 +252,6 @@ def compare(imagedir):
 	    phashvalue=hamming(serieA,serieB)
 	
 	    histvalue=histRGB(imagepath,secimagepath)
-	    #histvalue=histGRAY(imagepath,secimagepath)
 	    print(filelist[secimdir]+" complete!")
 
 	    surfsift[imdir].append(surfsiftvalue)
@@ -290,6 +260,7 @@ def compare(imagedir):
 	    histsim[imdir].append(histvalue)
 	    phashham[imdir].append(phashvalue)
 	print("one success!")
+	break
     return surfsift,siftsift,orborb,histsim,phashham
 
 #save compare result to file 
@@ -299,13 +270,9 @@ def save(surfsift,siftsift,orborb,histsim,phashham,savedir,title):
 	np.save(path,value)
     print("Save "+title+" success!")
 
-
 if __name__=="__main__":
     wn.filterwarnings("ignore")
     print("Test case.")
-    surfsift,siftsift,orborb,histsim,phashham=compare('../RGB')
-    #surfsift=compare('../RGB')
+    surfsift,siftsift,orborb,histsim,phashham=compare('/home/fly/mygit/images/change/RGB')
     save(surfsift,siftsift,orborb,histsim,phashham,'../data',"RGB")
-    #path=os.path.join('../data',"RGBsurfsift.npy")
-    #np.save(path,surfsift)
     print("success")
