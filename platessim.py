@@ -32,8 +32,8 @@ def compare(imagedir):
 	    secimagepath=os.path.join(imagedir,filelist[secimdir])
 	    secimage=cv2.imread(secimagepath)
 	    ssimvalue=sm.compare_ssim(original,secimage,multichannel=True)   #ssim
-	    ssimvalue=("%.3f" % ssimvalue)   #keep 3 decimal places
-	    #print(filelist[secimdir]+" complete!ssim value is "+str(ssimvalue))
+	    ssimvalue=float("%.3f" % ssimvalue)   #keep 3 decimal places
+	    #print(type(ssimvalue))
 	    ssimarray[imdir].append(ssimvalue)
 	print("calculate "+filelist[imdir]+" success!")
     return ssimarray
