@@ -40,9 +40,11 @@ if __name__=="__main__":
 	    bardata.append(numi)
 	(shortname,extension)=os.path.splitext(filelist[name])
 	plt.figure()
-	plt.title(shortname)
+	#plt.title(shortname)
 	plt.bar(np.arange(100),bardata,facecolor='g')    #draw the bar image
-	plt.xticks(np.arange(0,100,10),(Tks),rotation=0)
+	plt.xticks(np.arange(0,100,10),(Tks),rotation=0)  #ticks 
+	plt.xlabel("Theshold")
+	plt.ylabel("Number of shares")
 	#plt.xticks()  #set the xticks ,rotation=90,rotate 30 degrees
 	path=os.path.join('/home/fly/mygit/images/similarity',shortname+'.png')
 	plt.savefig(path,dpi=100)
