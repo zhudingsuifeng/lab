@@ -10,7 +10,6 @@ import os
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
-import warnings as wn
 import cv2
 import skimage.measure as sm
 import networkx as nx
@@ -18,39 +17,37 @@ import pandas as pd
 
 #compare image similarity
 def getdata(datapath):
-    path=os.path.join('/home/fly/mygit/data/similarity',datapath) #combine the file path
-    data=np.loadtxt(path,delimiter=",")    #load the csv file
-    return data[0]
+    #path=os.path.join('/home/fly/mygit/data/similarity',datapath) #combine the file path
+    data=np.loadtxt(datapath,delimiter=",")    #load the csv file
+    return data
 
 if __name__=="__main__":
-    wn.filterwarnings("ignore")
-    filelist=os.listdir('/home/fly/mygit/data/similarity')
-    for name in range(0,len(filelist)):
+    fpath='/home/fly/mygit/data/similarity/gasfssim.csv'
+    Tks=[]
+    data=getdata(fpath)
+    for i in np.arange(0,1,0.1):
+	Tks.append(str(i))
+    for row in range(0,len(data)):
 	bardata=[]
-	Tks=[]
-	for i in np.arange(0,1,0.1):
-	    Tks.append(str(i))
-	data=getdata(filelist[name])
-	order=np.sort(data)
+	order=np.sort(data[row])
 	for l in np.arange(0,1,0.01):
 	    numi=0
 	    for i in order:
 		if i>l and i<=(l+0.01):
 		    numi+=1
 	    bardata.append(numi)
-	(shortname,extension)=os.path.splitext(filelist[name])
 	plt.figure()
 	#plt.title(shortname)
 	plt.bar(np.arange(100),bardata,facecolor='g')    #draw the bar image
 	plt.xticks(np.arange(0,100,10),(Tks),rotation=0)  #ticks 
-	plt.xlabel("Theshold")
+	plt.xlabel("Similarity")
 	plt.ylabel("Number of shares")
 	#plt.xticks()  #set the xticks ,rotation=90,rotate 30 degrees
-	path=os.path.join('/home/fly/mygit/images/similarity',shortname+'.png')
+	path=os.path.join('/home/fly/mygit/images/similarity','gasfssim'+str(row)+'.png')
 	plt.savefig(path,dpi=100)
 	#plt.show()
 	plt.close()
-	print(shortname+" success")
+	print("gasfssim "+str(row)+" success")
 	#break
 	
     print("success")
