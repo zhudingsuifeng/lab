@@ -25,6 +25,34 @@
 - import matplotlib.pyplot as plt 时报错，显示ImportError:No module named Tkinter.
 - #yum -y install tkinter  #之后tkinter模块安装完毕，就不会出现之前的错误了。
 - 另外networkX目前只支持python2，并不支持python3,当前的时间是2017-06-21.
+#### python2 -m pip install community
+```javascript
+#python2 -m pip install community
+import community
+import networkx as nx
+G=nx.Graph()
+part=community.best_partition(G)
+AttributeError:'module' object has no attribute 'best_partition'
+#python2 -m pip install python-louvain
+execution succeed
+#python2 -m pip install python-igraph
+configure:error: no C++ compiler found or it connot create executables
+Could not download and compile the C core of igraph
+#yum install gcc-c++
+#yum install igraph-devel
+#python2 -m pip install python-igraph
+execution succeed
+note:dnf is fedora's yum
+import tushare as ts
+industry=ts.get_industry_classified()
+industry.to_csv(datadir)
+UnicodeEncodeError:'ascii' codec can't encode characters in position 0-3:ordinal not in range(128)
+Solution:
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+execution succeed.
+```
 #### python忽略warning警告错误
 - 在编写文件时：
 ```javascript
