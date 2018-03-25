@@ -32,7 +32,7 @@ def getstockcode(data):
     return stockcode
 
 #draw a complex network with networkx
-def xdrawnet(codes,similarity,threshold):
+def xdrawnet(codes,similarity,threshold,imdir,title):
     fig=plt.figure(figsize=(10,10),dpi=60)
     G=nx.Graph()
     for code in codes:
