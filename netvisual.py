@@ -1,35 +1,86 @@
 #!/usr/bin/env python 
-
-import tushare as ts
+#coding=utf-8
+"""
+Created on Mon Jan 8 19:24:16 2018
+Modify on Mon Mar 19 15:40:30 2018
+@author: fly
+Construct complex network and analysis the network.
+datadir:/home/fly/data/compare
+imagedir:/home/fly/images/compare
+"""
+import os
+import csv
+import math
+import numpy as np
+import networkx as nx  #complex network tool
 import community
 import matplotlib.pyplot as plt
-import networkx as nx
-import igraph
+import scipy.stats as stats
 
-g=igraph.Graph.GRG(36,0.3)
-#print(g)
-#fig=plt.figure()
-visual_style={}
-visual_style["vertex_size"]=6
-visual_style["bbox"]=(800,800)
-visual_style["edge_width"]=0.3
-visual_style["edge_color"]="grey"
-visual_style["vertex_color"]="purple"
-visual_style["margin"]=10
-visual_style["vertex_shape"]="circle"
-#visual_style[""]=1
-igraph.plot(g,'g.png',layout=g.layout("lgl"),**visual_style)
-#igraph.add(fig,g)
-#igraph.save(g,'g.png')
-#plt.savefig('g.png')
-#plt.show()
+#get stock code from file
+def getstockcode(datadir):
+    stockcode=[]
+    filelist=os.listdir(datadir)
+    for each in filelist:
+	(code,ext)=os.path.splitext(each)
+	stockcode.append(code)
+    return stockcode
 
-#G=nx.complete_graph(10)
+#dictionary to array
+def dicttoarray(dictionary):
+    data=[]
+    for each in dictionary.items():
+	data.append(each)
+    return np.array(data)
 
-#part=community.best_partition(G)
+#draw a complex network with networkx
+def xdrawnet(codes,similarity,threshold,savedir,title):
+    g=nx.Graph()
+    for i in range(0,len(codes)):
+	g.add_node(codes[i])
+    for start in range(0,len(codes)):
+	for end in range((start+1),len(codes)):
+	    if abs(similarity[start][end])>=threshold:
+		g.add_edge(codes[start],codes[end])
+    #g=nx.barabasi_albert_graph(600,6)
+    part=community.best_partition(g)
+    '''
+    temp=[]
+    for parta in sorted(dicttoarray(part),key=lambda x : x[1],reverse=True):
+    	temp.append(parta[0])
 
-#print(part)
-#df= ts.get_stock_basics()
-#path=os.path.join()
-#df.to_csv('/home/fly/mygit/data/stock/basic.csv')
-print("success")
+    g=nx.Graph()
+    for i in temp:
+	g.add_node(temp[i])
+    for (u,v) in G.edges():
+	g.add_edge(u,v)
+    '''
+    fig=plt.figure(figsize=(10,10),dpi=300)
+    options={
+    'edge_color':'grey',
+    'linewidths':0,
+    'width':0.1,
+    'alpha':0.6,
+    }   #set networks properties
+    nsize=[(60+g.degree(v)*0.8) for v in g]
+    ncolor=[part.get(v)for v in g]
+    #nx.draw_spring(g,node_size=nsize,node_color=ncolor,with_labels=False,**options)
+    nx.draw(g,nx.spring_layout(g,k=48/math.sqrt(g.number_of_nodes())),node_size=nsize,node_color=ncolor,with_labels=False,**options)
+
+    netpath=os.path.join(savedir,title+str(threshold)+'xnet.png')
+    if not os.path.exists(savedir):         #if directory is not exsits ,make it.
+	os.mkdir(savedir)
+    plt.savefig(netpath)
+    plt.close()
+    #return G
+
+if __name__=="__main__":
+    stockcode=getstockcode('/home/fly/mygit/images/mixing/chcltr/gasf')
+    imgdir='/home/fly/mygit/images/net'
+    #load csv file.
+    imgssim=np.loadtxt('/home/fly/mygit/data/similarity/gasfssim.csv',delimiter=",")
+    pearson=np.loadtxt('/home/fly/mygit/data/similarity/pearson.csv',delimiter=",")
+    for threshold in np.arange(0.4,0.41,0.01):
+	#xdrawnet(stockcode,pearson,threshold,imgdir,'pearson')
+	xdrawnet(stockcode,imgssim,threshold,imgdir,'imgssim')
+    print("success")
