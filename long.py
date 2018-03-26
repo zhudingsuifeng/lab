@@ -141,7 +141,7 @@ def lognodes(data):
 
 #analysis of the network
 def netanalysis(stockcode,pearson,imgssim):
-    datadir='/home/fly/mygit/data/compare'
+    datadir='/home/fly/mygit/data/temp/long'
     imgdir='/home/fly/mygit/images/compare'
     psubnodes=[]              #number of maximum connected subgraph nodes
     isubnodes=[]              #number of maximum connected subgraph nodes
@@ -159,7 +159,7 @@ def netanalysis(stockcode,pearson,imgssim):
     iaverage_node_connectivity=[]
 
     #build a network base on thresholds
-    for threshold in np.arange(0.79,0.8,0.01):
+    for threshold in np.arange(0.15,0.2,0.01):
 	#draw network from similarity matrix
 	pg=xdrawnet(stockcode,pearson,threshold,imgdir,'pearson') #dir-----
 	ig=xdrawnet(stockcode,imgssim,threshold,imgdir,'imgssim')
