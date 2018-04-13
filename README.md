@@ -92,6 +92,17 @@ plt.show()                              #Show graph G
 - python代码注意缩进，特别是有:的下一行，即便是注释也要缩进，不然报错。
 - range(start,end,scan) #计数从start开始，到end结束，但不包括end。scan每次跳跃的间距。
 - 在进行文件处理时，注意把文件关闭，不然会产生临时文件，报错。
+```javascript
+import tushare as ts
+#version 1.0.5
+ts.get_hs300s()
+error:No module named xlrd
+#python2 -m pip install xlrd
+urlopen error ftp error: [Errno ftp error] 550 /webdata/000016cons.xls: No such file or directory.
+#python2 -m pip install tushare --upgrade
+#version:1.1.7
+#error is resolved
+```
 #### matplotlib.pyplot使用。
 ```javascript
 import matplotlib.pyplot as plt
