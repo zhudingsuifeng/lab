@@ -19,7 +19,9 @@ import pandas as pd
 
 #get the stock data corresponding to the stock code
 def get_stock_data(stock_code,stockdir):
-    stock=ts.get_hist_data(stock_code)
+    #stock=ts.get_hist_data(stock_code)    #get latest three years stock historical data
+    #stock=ts.get_h_data(stock_code)       #get latest one year historical stock data
+    stock=ts.get_k_data(stock_code,start='2000-01-01')        #get all historical stock data
     if not os.path.exists(stockdir):
 	os.mkdir(stockdir)
     path=os.path.join(stockdir,stock_code+'.csv')
