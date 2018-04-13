@@ -55,6 +55,8 @@ def platefilter(industry):
 
 if __name__=="__main__":
     print("Test case.")
+    csi300=ts.get_hs300s()
+    csi300_code=np.array(csi300)[:,1]
     industrylist=[['金融行业','financial'],['有色金属','metal'],['煤炭行业','coal'],['电力行业','electricity'],['钢铁行业','steel'],['酿酒行业','brewing'],['家电行业','appliances'],['生物制药','biopharmaceutical'],['电子信息','digital'],['化纤行业','chemical']]
 
     #filter stock
