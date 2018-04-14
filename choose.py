@@ -28,8 +28,8 @@ def getcoldata(reader,col3,col5,col7):
     return replace(data3[1:101]),replace(data5[1:101]),replace(data7[1:101])
 
 wn.filterwarnings("ignore")
-mydir='/home/fly/code/dataset'
-datadir='/home/fly/mygit/data/stock'
+mydir='/home/fly/hs/data'
+datadir='/home/fly/hs/interdata'
 filelist=os.listdir(mydir)
 change=[]
 close=[]

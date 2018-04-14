@@ -40,9 +40,9 @@ def savefile(savedir,filename,data):
 
 
 if __name__=="__main__":
-    data='/home/fly/mygit/data/stock/close.csv'
-    stockdir='/home/fly/mygit/data/stock'
-    savedir='/home/fly/mygit/data/similarity'
+    data='/home/fly/hs/interdata/close.csv'
+    stockdir='/home/fly/hs/data'
+    savedir='/home/fly/hs/interdata'
     logs=[]
 
     #get stock close price.
@@ -53,7 +53,7 @@ if __name__=="__main__":
     for i in range(0,len(close)):
 	log=logearn(close[i])
 	logs.append(log)
-    savefile(stockdir,'logearn.csv',logs)      #save logarithmic price earnings to csv file.
+    savefile(savedir,'logearn.csv',logs)      #save logarithmic price earnings to csv file.
     print("calclate logearn success")
 
     #calculate the pearson correlation coefficients.
