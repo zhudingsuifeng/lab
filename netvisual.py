@@ -55,17 +55,18 @@ def xdrawnet(codes,similarity,threshold,savedir,title):
     for (u,v) in G.edges():
 	g.add_edge(u,v)
     '''
-    fig=plt.figure(figsize=(10,10),dpi=300)
+    fig=plt.figure(figsize=(10,10),dpi=100)
     options={
     'edge_color':'grey',
     'linewidths':0,
-    'width':0.1,
-    'alpha':0.6,
+    'width':0.6,
+    'alpha':0.8,
     }   #set networks properties
-    nsize=[(60+g.degree(v)*0.8) for v in g]
+    nsize=[(200+g.degree(v)*20) for v in g]
     ncolor=[part.get(v)for v in g]
     #nx.draw_spring(g,node_size=nsize,node_color=ncolor,with_labels=False,**options)
-    nx.draw(g,nx.spring_layout(g,k=48/math.sqrt(g.number_of_nodes())),node_size=nsize,node_color=ncolor,with_labels=False,**options)
+    #nx.draw(g,nx.spring_layout(g),node_size=nsize,node_color=ncolor,with_labels=False,**options)
+    nx.draw(g,nx.spring_layout(g,k=16/math.sqrt(g.number_of_nodes())),node_size=nsize,node_color=ncolor,with_labels=False,**options)
 
     netpath=os.path.join(savedir,title+str(threshold)+'xnet.png')
     if not os.path.exists(savedir):         #if directory is not exsits ,make it.
@@ -75,12 +76,12 @@ def xdrawnet(codes,similarity,threshold,savedir,title):
     #return G
 
 if __name__=="__main__":
-    stockcode=getstockcode('/home/fly/mygit/images/mixing/chcltr/gasf')
-    imgdir='/home/fly/mygit/images/net'
+    stockcode=getstockcode('/home/fly/hs/data')
+    imgdir='/home/fly/hs/result'
     #load csv file.
-    imgssim=np.loadtxt('/home/fly/mygit/data/similarity/gasfssim.csv',delimiter=",")
-    pearson=np.loadtxt('/home/fly/mygit/data/similarity/pearson.csv',delimiter=",")
-    for threshold in np.arange(0.4,0.41,0.01):
-	#xdrawnet(stockcode,pearson,threshold,imgdir,'pearson')
-	xdrawnet(stockcode,imgssim,threshold,imgdir,'imgssim')
+    imgssim=np.loadtxt('/home/fly/hs/interdata/gasfssim.csv',delimiter=",")
+    pearson=np.loadtxt('/home/fly/hs/interdata/pearson.csv',delimiter=",")
+    for threshold in np.arange(0.48,0.66,0.01):
+	xdrawnet(stockcode,pearson,threshold,imgdir,'pearson')
+	#xdrawnet(stockcode,imgssim,threshold,imgdir,'imgssim')
     print("success")
