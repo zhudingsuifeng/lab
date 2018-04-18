@@ -2,6 +2,7 @@
 #coding=utf-8
 """
 Create on Sun Dec 3 15:33:50 2017
+Modified on Wed Apr 18 09:15:12 2018
 @author: fly
 Compare features similarity and show in the picture.
 """
@@ -15,8 +16,29 @@ import skimage.measure as sm
 import networkx as nx
 import pandas as pd
 
+#create a heat map with label
+def heat_map(matrix,imgname,label):
+    matrix=np.array(matrix)
+    #fig=plt.figure(figsize=(10,10))
+    #ax=fig.add_subplot(1,1,1,frameon=False)
+    fig,ax=plt.subplots()
+    ax.imshow(matrix)
+    ax.set_title("Feature Select")
+    #ax.set_xticks(np.arange(len(label)))
+    #ax.set_yticks(np.arange(len(label)))
+    #ax.set_xticklabels(label)
+    #ax.set_yticklabels(label)
+    fig.tight_layout()
+    plt.savefig(imgname)
+    plt.show()
+
 if __name__=="__main__":
-    wn.filterwarnings("ignore")
+    pearson=np.loadtxt('/home/fly/hs/000001.csv',delimiter=",")
+    #pearson=np.loadtxt('/home/fly/hs/000002.csv',delimiter=",")
+    label=[]
+    label=['change','%chg','open','high','close','low','volume','turnover','ma5','ma10','ma20','v_ma5','v_ma10','v_ma20']
+    heat_map(pearson,"/home/fly/hs/p1.png",label)
+    '''
     s=[[0.148,0.149,0.986,0.995,1,0.992,0.659,0.661],
        [0.997,1,0.015,0.095,0.149,0.043,0.353,0.353],
        [0.338,0.353,0.607,0.689,0.659,0.6,1,1]]
@@ -35,5 +57,5 @@ if __name__=="__main__":
 	plt.close()
 	#plt.show()
 	#break
-    	
+    '''	
     print("success")
