@@ -66,6 +66,19 @@ def get_edge(stockcode,pearson,imgssim):
 	print(str(threshold)+" success")
 	#break
 
+#get weight links
+def weight_links(code,pearson,imgssim):
+    ped=[]
+    for start in range(0,len(code)):
+	for end in range((start+1),len(code)):
+	    ped.append([code[start],code[end],pearson[start][end]])
+    save_csv(ped,'/home/fly/hs/links/pearson.csv')
+    ied=[]
+    for start in range(0,len(code)):
+	for end in range((start+1),len(code)):
+	    ied.append([code[start],code[end],imgssim[start][end]])
+    save_csv(ied,'/home/fly/hs/links/imgssim.csv')
+
 #save list to csv file
 def save_csv(data,path):
     with open(path,"w") as csvf:
@@ -78,5 +91,5 @@ if __name__=="__main__":
     #load csv file.
     imgssim=np.loadtxt('/home/fly/hs/interdata/gasfssim.csv',delimiter=",")
     pearson=np.loadtxt('/home/fly/hs/interdata/pearson.csv',delimiter=",")
-    get_edge(stockcode,pearson,imgssim)
+    weight_links(stockcode,pearson,imgssim)
     print("success")
