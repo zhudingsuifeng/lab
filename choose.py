@@ -2,56 +2,55 @@
 #coding=utf-8
 """
 Create on Mon Oct 30 19:14:25 2017
-Modify on Thu Nov 30 19:43:59 2017
+Modify on Tue Apr 24 10:00:45 2018
 @author:fly
-Pretreatment stock data.
+Pretreatment stock data.Frequent opening of files results in less efficiency.
 """
 import os
 import csv
 import numpy as np
-import warnings as wn
 
-def replace(series):
-    temp=[]
-    for i in range(len(series)-1,-1,-1):    #range(x,y,t) get number [x,y) by step t.
-	temp.append(float(series[i]))
-    return temp
+#get stock attribute data with specified length
+def get_attr(seq,l):
+    return seq[0:l:-1]
 
-def getcoldata(reader,col3,col5,col7):
-    data3=[]
-    data5=[]
-    data7=[]
-    for row in reader:
-	data3.append(row[col3])
-	data5.append(row[col5])
-	data7.append(row[col7])
-    return replace(data3[1:101]),replace(data5[1:101]),replace(data7[1:101])
-
-wn.filterwarnings("ignore")
-mydir='/home/fly/hs/data'
-datadir='/home/fly/hs/interdata'
-filelist=os.listdir(mydir)
-change=[]
-close=[]
-trade=[]
-for f in range(0,len(filelist)):
-    path=os.path.join(mydir,filelist[f])
-    (shortname,extension)=os.path.splitext(filelist[f])    #get shortname and extension from filename
-    with open(path)as csvf:
+#get specified column from file
+def get_col(path,c,l):
+    with open(path) as csvf:
 	reader=csv.reader(csvf)
-	tclose,ttrade,tchange=getcoldata(reader,3,5,7)
-    change.append(tchange)
-    close.append(tclose)
-    trade.append(ttrade)
-    print(shortname+" success!")
+	reader.next()
+	col=map(float,[row[c] for row in reader])
     csvf.close()
-    #break
+    return col[l-1::-1]
 
-changepath=os.path.join(datadir,"change.csv")
-closepath=os.path.join(datadir,"close.csv")
-tradepath=os.path.join(datadir,"trade.csv")
-np.savetxt(changepath,change,delimiter=',')  #save matrix to csv file
-np.savetxt(closepath,close,delimiter=',')
-np.savetxt(tradepath,trade,delimiter=',')
+#save matrix data to specified file
+def save_file(name,data,savedir='/home/fly/hs/interdata'):
+    path=os.path.join(savedir,name)
+    np.savetxt(path,data,delimiter=',')
 
-print("success") 
+if __name__=='__main__':
+
+    mydir='/home/fly/hs/data'
+    datadir='/home/fly/hs/interdata'
+    filelist=os.listdir(mydir)
+    change=[]
+    lclose=[]
+    close=[]
+    trade=[]
+    turnover=[]
+    for each in filelist:
+    	path=os.path.join(mydir,each)
+    	(shortname,extension)=os.path.splitext(each)    #get shortname and extension from filename
+    	change.append(get_col(path,7,100))
+	lclose.append(get_col(path,3,101))
+    	close.append(get_col(path,3,100))
+   	trade.append(get_col(path,5,100))
+	turnover.append(get_col(path,14,100))
+    	print(shortname+" success!")
+    	#break
+    save_file("change.csv",change)
+    save_file("lclose.csv",lclose)
+    save_file("close.csv",close)
+    save_file("trade.csv",trade)
+    save_file("turnover.csv",turnover)
+    print("success") 
