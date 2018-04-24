@@ -40,7 +40,7 @@ def savefile(savedir,filename,data):
 
 
 if __name__=="__main__":
-    data='/home/fly/hs/interdata/close.csv'
+    data='/home/fly/hs/interdata/lclose.csv'
     stockdir='/home/fly/hs/data'
     savedir='/home/fly/hs/interdata'
     logs=[]
