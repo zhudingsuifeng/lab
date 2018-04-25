@@ -55,8 +55,13 @@ def difference(ma,mb,num,code):
 if __name__=="__main__":
     stockcode=stock_code('/home/fly/hs/interdata/stockcode.csv')
     pearson=np.loadtxt('/home/fly/hs/interdata/pearson.csv',delimiter=",")
-    imgssim=np.loadtxt('/home/fly/hs/interdata/gasfssim.csv',delimiter=",")
+    cssim=np.loadtxt('/home/fly/hs/interdata/cgasfssim.csv',delimiter=",")
+    lssim=np.loadtxt('/home/fly/hs/interdata/lgasfssim.csv',delimiter=",")
     save_csv(largest(pearson,10,stockcode),'/home/fly/hs/interdata/pl10.csv')
-    save_csv(largest(imgssim,10,stockcode),'/home/fly/hs/interdata/il10.csv')
-    save_csv(difference(pearson,imgssim,10,stockcode),'/home/fly/hs/interdata/dl10.csv')
+    save_csv(largest(cssim,10,stockcode),'/home/fly/hs/interdata/icl10.csv')
+    save_csv(largest(lssim,10,stockcode),'/home/fly/hs/interdata/ill10.csv')
+    save_csv(difference(pearson,cssim,10,stockcode),'/home/fly/hs/interdata/dcl10.csv')
+    save_csv(difference(pearson,lssim,10,stockcode),'/home/fly/hs/interdata/dll10.csv')
+    save_csv(difference(lssim,cssim,10,stockcode),'/home/fly/hs/interdata/diil10.csv')
+    
     print("success")

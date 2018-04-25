@@ -59,8 +59,10 @@ if __name__=="__main__":
     wn.filterwarnings("ignore")
     savedir='/home/fly/hs/interdata'
     ssim=[]      #ssim
-    ssim=compare('/home/fly/hs/images')
-    save(ssim,savedir,"gasf")
-    get_stock_code('/home/fly/hs/data')
+    cssim=compare('/home/fly/hs/cgasf')
+    save(cssim,savedir,"cgasf")
+    lssim=compare('/home/fly/hs/lgasf')
+    save(lssim,savedir,"lgasf")
+    #get_stock_code('/home/fly/hs/data')
 
     print("success")

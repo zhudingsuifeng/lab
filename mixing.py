@@ -47,30 +47,6 @@ def GAF(series,Type):
 	sys.exit('Unknown type!')
     return matrix           #matrix is a 2-D array
 
-#Calculate MTF matrix form time series (series) and quantitle bins(Q)
-def MTF(series,Q,Type):
-    Qcut=pd.qcut(series,Q,duplicates='drop') #pandas.qcut(),discretize variable into equal-sized buckets based on rank or based on sample quantiles."codes" contains bucket labels.(duplicates='drop'),drop the duplicate edges.
-    label=Qcut.codes#the bins number
-    MSM=np.zeros([Q,Q])
-    matrix=[]
-    patch=[]
-    paamatrix=[]
-    for i in range(0,len(label)-1):   #create the markov transition matrix
-	MSM[label[i]][label[i+1]]+=1
-    for i in xrange(Q):           
-	if sum(MSM[i][:])==0:         #Prevent denominator from zero  
-	    MSM[i][:]=1.0/Q
-	     #continue
-	MSM[i][:]=MSM[i][:]/sum(MSM[i][:])#Normalized the markov matrix
-    for p in range(len(series)):      #create the MTF matrix
-	for q in range(len(series)):
-	    matrix.append(MSM[label[p]][label[q]]) #note!!!!!!
-    if Type=='None':
-	MTFmatrix=np.array(matrix).reshape(len(series),len(series))#array.reshape(l,l) gives a new shape to an array without changing its data.
-    else:
-	sys.exit('Unknown type!')
-    return np.array(MTFmatrix)
-
 def mixing(matrixa,matrixb,matrixc,length):
     matrix=np.zeros([length,length,3])
     for i in range(0,length):
@@ -89,72 +65,56 @@ def loaddata(path):
     raw=[map(float,each.strip().split(',')) for each in raw]
     return raw
 
-#################################
-###Define the parameters here####
-#################################
 if __name__=="__main__":
     Q=10
     length = 100
-    mydir='/home/fly/code/dataset'
+    mydir='/home/fly/hs/data'
     filelist=os.listdir(mydir)
-    close=loaddata('/home/fly/mygit/data/stock/close.csv')
-    trade=loaddata('/home/fly/mygit/data/stock/trade.csv')
-    change=loaddata('/home/fly/mygit/data/stock/change.csv')
+    close=loaddata('/home/fly/hs/interdata/close.csv')
+    logearn=loaddata('/home/fly/hs/interdata/logearn.csv')
+    turnover=loaddata('/home/fly/hs/interdata/turnover.csv')
+    change=loaddata('/home/fly/hs/interdata/change.csv')
             
     changegasf = []
-    #changegadf = []
+    logearngasf=[]
     closegasf = []
-    #closegadf = []
-    tradegasf = []
-    #tradegadf = []
+    turnovergasf = []
     gasfimage=[]
-    #gadfimage=[]
     for each in close:
-	closedata=rescale(each[:],'MaxZero')    #rescale def before
+	closedata=rescale(each[:],'Zero')    #rescale def before
 	GASFmatrix=GAF(closedata,'GASF')    #Without reduce the image size.GAFmatrix is a 2-D array.
-	#GADFmatrix=GAF(closedata,'GADF')
-	#MTFmatrix=MTF(each[:],Q,'None')
         closegasf.append(GASFmatrix)
-	#closegadf.append(GADFmatrix)
-	#closemtf.append(MTFmatrix)
     print("close success")
+    
+    for each in logearn:
+	logearndata=rescale(each[:],'Zero')
+	GASFmatrix=GAF(logearndata,'GASF')
+	logearngasf.append(GASFmatrix)
+    print("logearn success")
     
     for each in change:
 	changedata=rescale(each[:],'Zero')
 	GASFmatrix=GAF(changedata,'GASF')
-	#GADFmatrix=GAF(changedata,'GADF')
-	#MTFmatrix=MTF(each[:],Q,'None')
 	changegasf.append(GASFmatrix)
-	#changegadf.append(GADFmatrix)
-	#changemtf.append(MTFmatrix)
     print("change success")
 
-    for each in trade:
-	tradedata=rescale(each[:],'MaxZero')
-	GASFmatrix=GAF(tradedata,'GASF')
-        #GADFmatrix=GAF(tradedata,'GADF')
-        #MTFmatrix=MTF(each[:],Q,'None')
-        tradegasf.append(GASFmatrix)
-	#tradegadf.append(GADFmatrix)
-	#trademtf.append(MTFmatrix)
+    for each in turnover:
+	turnoverdata=rescale(each[:],'Zero')
+	GASFmatrix=GAF(turnoverdata,'GASF')
+        turnovergasf.append(GASFmatrix)
     print("trade success")
     
-    for i in range(0,len(close)):
-	#gadfmatrix=mixing(changegadf[i],closegadf[i],tradegadf[i],length)
-        #gadfimage.append(gadfmatrix)
-	gasfmatrix=mixing(changegasf[i],closegasf[i],tradegasf[i],length)
+    for i in range(0,len(change)):
+	gasfmatrix=mixing(changegasf[i],logearngasf[i],turnovergasf[i],length)
         gasfimage.append(gasfmatrix)
 	print("success +++")
     print("mixing success")
 
-    #chtrclimage=np.asarray(chtrclimage)   #Convert the input to an array.Input should be the array_like.
-    #gadfimage=np.asarray(gadfimage)
     gasfimage=np.asarray(gasfimage)
 
     for i in range(0,len(filelist)):
 	(shortname,extension)=os.path.splitext(filelist[i])
-	#savefig("/home/fly/mygit/images/mixing/chcltr/gadf",shortname,gadfimage[i])
-	savefig("/home/fly/mygit/images/mixing/normal/rgbgasf",shortname,gasfimage[i])
+	savefig("/home/fly/hs/lgasf",shortname,gasfimage[i])
 	print("save "+shortname+" sucess!!!!")
     
     print("success")
