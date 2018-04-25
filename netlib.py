@@ -143,8 +143,6 @@ def lognodes(data):
 
 #analysis of the network
 def netanalysis(stockcode,pearson,imgssim):
-    #datadir='/data/home/xjsjxly/fly/result/data'
-    #imgdir='/data/home/xjsjxly/fly/result/images'
     datadir='/home/fly/mygit/data/compare'
     imgdir='/home/fly/hs/result'
     psubnodes=[]              #number of maximum connected subgraph nodes
@@ -181,19 +179,9 @@ def netanalysis(stockcode,pearson,imgssim):
     icommunities=[]
     #build a network base on thresholds
     for threshold in np.arange(0.2,0.5,0.01):
-	#pg=nx.random_geometric_graph(16,0.25)
-	#ig=nx.random_geometric_graph(10,0.3)
 	#draw network from similarity matrix
 	pg=xdrawnet(stockcode,pearson,threshold) #dir-----
 	ig=xdrawnet(stockcode,imgssim,threshold)
-
-	#large subgraph nodes
-	#psubnodes.append([threshold,len(max(nx.connected_components(pg),key=len))])
-	#isubnodes.append([threshold,len(max(nx.connected_components(ig),key=len))])
-	
-	#the average clustering coefficient
-	#paverage_clustering.append([threshold,nx.average_clustering(pg)])
-	#iaverage_clustering.append([threshold,nx.average_clustering(ig)])
 
 	#the average global efficiency of the graph.
 	#pglobal_efficiency.append([threshold,nx.global_efficiency(pg)])
@@ -202,10 +190,6 @@ def netanalysis(stockcode,pearson,imgssim):
 	#density of a graph
 	#pdensity.append([threshold,nx.density(pg)])                      #return the density of a graph.
 	#idensity.append([threshold,nx.density(ig)])                      #return the density of a graph.
-
-	#the average connectivity of a graph
-	#paverage_node_connectivity.append([threshold,nx.average_node_connectivity(pg)])    
-	#iaverage_node_connectivity.append([threshold,nx.average_node_connectivity(ig)])    
 	
 	#degree centrality
 	#featurefile(dicttolist(nx.degree_centrality(pg)),datadir,threshold,'pearson','degreecentrality')            #compute the degree centrality for nodes.
@@ -218,20 +202,6 @@ def netanalysis(stockcode,pearson,imgssim):
 	#betweenness centrality
 	#featurefile(dicttolist(nx.betweenness_centrality(pg)),datadir,threshold,'pearson','betweennesscentrality') #compute shortest-path betweenness centrality for nodes.
 	#featurefile(dicttolist(nx.betweenness_centrality(ig)),datadir,threshold,'imgssim','betweennesscentrality') #compute shortest-path betweenness centrality for nodes.
-
-
-	#nx.edge_betweenness_centrality(g)  #compute betweenness centrality for edges.
-	#featurefile(dicttolist(nx.edge_betweenness_centrality(pg)),datadir,threshold,'pearson','edgebetweennesscentrality')         #compute closeness centrality for nodes.
-	#featurefile(dicttolist(nx.edge_betweenness_centrality(ig)),datadir,threshold,'imgssim','edgebetweennesscentrality')         #compute closeness centrality for nodes.
-
-	#nx.load_centrality(g)              #compute load centrality for nodes.
-	#featurefile(dicttolist(nx.load_centrality(pg)),datadir,threshold,'pearson','loadcentrality')         #compute closeness centrality for nodes.
-	#featurefile(dicttolist(nx.load_centrality(ig)),datadir,threshold,'imgssim','loadcentrality')         #compute closeness centrality for nodes.
-
-	#nx.edge_load_centrality(g)         #compute edge load.
-	#featurefile(dicttolist(nx.edge_load_centrality(pg)),'/home/fly/mygit/data/compare/edge_load_centrality',threshold,'pearson','edgeloadcentrality')         #compute closeness centrality for nodes.
-	#featurefile(dicttolist(nx.edge_load_centrality(ig)),'/home/fly/mygit/data/compare/edgeloadcentrality',threshold,'imgssim','edgeloadcentrality')         #compute closeness centrality for nodes.
-	'''
 	#community
     	ppart=community.best_partition(pg)    #Get the module level when the largest community division
     	pQ=community.modularity(ppart,pg)
@@ -242,20 +212,14 @@ def netanalysis(stockcode,pearson,imgssim):
     	iQ=community.modularity(ipart,ig)
     	inodes=len(set(ipart.values()))
     	icommunities.append([threshold,inodes,iQ])
-
-	#nx.graph_number_of_cliques(g)     #returns the number of maximal cliques in the graph.
-
-	#g.degree()                         #a degreeview for the graph as g.degree or g.degree()
 	featurefile(pg.degree(),datadir,threshold,'pearson','degree')            #compute the degree centrality for nodes.
 	featurefile(ig.degree(),datadir,threshold,'imgssim','degree')            #compute the degree centrality for nodes.
-	'''
 	comscatter(np.array(lognodes(nx.degree_histogram(pg))),np.array(lognodes(nx.degree_histogram(ig))),threshold,imgdir,'logdegree','logdegree','lognodes')   #draw nodes and degree image
 	comscatter(np.array(degnodes(nx.degree_histogram(pg))),np.array(degnodes(nx.degree_histogram(ig))),threshold,imgdir,'degree','degree','nodes')   #
 	print(str(threshold)+" success")
 	#nx.degree_histogram(g)             #return a list of the frequency of each degree value.
     	#savefile(datadir,str(threshold)+"pdegree.csv",nx.degree_histogram(pg))
     	#savefile(datadir,str(threshold)+"idegree.csv",nx.degree_histogram(ig))
-    '''
     savefile(datadir,"pcommunity.csv",pcommunities)
     savefile(datadir,"icommunity.csv",icommunities)
     print("calculate community success")
@@ -279,7 +243,6 @@ def netanalysis(stockcode,pearson,imgssim):
     savefile(datadir,"pdensity.csv",pdensity)
     savefile(datadir,"idensity.csv",idensity)
     print("density success")
-    '''
     #complot(np.array(paverage_node_connectivity),np.array(iaverage_node_connectivity),'/home/fly/mygit/images/compare','averagenodeconnectivity','Threshold','value')
     #savefile('/home/fly/mygit/data/compare',"paverage_node_connectivity.csv",paverage_node_connectivity)
     #savefile('/home/fly/mygit/data/compare',"iaverage_node_connectivity.csv",iaverage_node_connectivity)
@@ -293,12 +256,10 @@ def savefile(savedir,filename,data):
     np.savetxt(path,data,delimiter=',')
 
 if __name__=="__main__":
-    #stockcode=getstockcode('/data/home/xjsjxly/fly/data/stockcode.csv')
     stockcode=getstockcode('/home/fly/hs/interdata/stockcode.csv')
     #load csv file.
-    #imgssim=np.loadtxt('/data/home/xjsjxly/fly/data/gasfssim.csv',delimiter=",")
-    #pearson=np.loadtxt('/data/home/xjsjxly/fly/data/pearson.csv',delimiter=",")
-    imgssim=np.loadtxt('/home/fly/hs/interdata/gasfssim.csv',delimiter=",")
+    cssim=np.loadtxt('/home/fly/hs/interdata/cgasfssim.csv',delimiter=",")
+    lssim=np.loadtxt('/home/fly/hs/interdata/lgasfssim.csv',delimiter=",")
     pearson=np.loadtxt('/home/fly/hs/interdata/pearson.csv',delimiter=",")
     netanalysis(stockcode,pearson,imgssim)
     print("success")
