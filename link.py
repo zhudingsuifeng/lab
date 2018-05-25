@@ -48,7 +48,8 @@ def xdrawnet(codes,similarity,threshold):
 def get_edge(stockcode,pearson,imgssim):
     savedir='/home/fly/hs/links'
     #build a network base on thresholds
-    for threshold in np.arange(0.2,0.5,0.01):
+    for threshold in np.arange(0.28,0.33,0.01):
+	'''
 	ped=[]
 	ppath=os.path.join(savedir,"p"+str(threshold)+".csv")
 	pg=xdrawnet(stockcode,pearson,threshold) #dir-----
@@ -56,7 +57,7 @@ def get_edge(stockcode,pearson,imgssim):
 	    ped.append([each[0],each[1]])
 	#print(ppath)
 	save_csv(ped,ppath)
-
+	'''
 	ied=[]
 	ipath=os.path.join(savedir,"i"+str(threshold)+".csv")
 	ig=xdrawnet(stockcode,imgssim,threshold) #dir-----
@@ -87,7 +88,8 @@ if __name__=="__main__":
     cssim=np.loadtxt('/home/fly/hs/interdata/cgasfssim.csv',delimiter=",")
     lssim=np.loadtxt('/home/fly/hs/interdata/lgasfssim.csv',delimiter=",")
     pearson=np.loadtxt('/home/fly/hs/interdata/pearson.csv',delimiter=",")
-    weight_links(stockcode,pearson,'/home/fly/hs/links/pearson.csv')
-    weight_links(stockcode,cssim,'/home/fly/hs/links/cssim.csv')
-    weight_links(stockcode,lssim,'/home/fly/hs/links/lssim.csv')
+    get_edge(stockcode,pearson,cssim)
+    #weight_links(stockcode,pearson,'/home/fly/hs/links/pearson.csv')
+    #weight_links(stockcode,cssim,'/home/fly/hs/links/cssim.csv')
+    #weight_links(stockcode,lssim,'/home/fly/hs/links/lssim.csv')
     print("success")

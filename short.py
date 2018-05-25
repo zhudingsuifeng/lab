@@ -149,7 +149,7 @@ def netanalysis(stockcode,sim,title):
     betweenness_centrality=[]
 
     #build a network base on thresholds
-    for threshold in np.arange(0.2,0.6,0.02):
+    for threshold in np.arange(0.05,0.9,0.05):
 	#draw network from similarity matrix
 	g=xdrawnet(stockcode,sim,threshold) #dir-----
 
