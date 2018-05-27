@@ -21,7 +21,7 @@ import pandas as pd
 def get_stock_data(stock_code,stockdir):
 	#stock=ts.get_hist_data(stock_code)    #get latest three years stock historical data
 	#stock=ts.get_h_data(stock_code)       #get latest one year historical stock data
-	stock=ts.get_k_data(stock_code,start='2005-04-08')        #get all historical stock data,seven columns
+	stock=ts.get_k_data(stock_code,start='2006-12-29',end='2016-12-30')        #get all historical stock data,seven columns
 	#stock=ts.get_h_data(stock_code,start='2005-04-08')      #get stock data with fifteen columns
 	if not os.path.exists(stockdir):
 		os.mkdir(stockdir)
