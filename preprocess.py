@@ -119,6 +119,12 @@ def stat(lst):
 	plt.savefig(fname)
 	plt.close()
 
+#save data to csv file
+def save_csv(path,data):
+	with open(path,'w')as f:
+		csvf=csv.writer(f)
+		csvf.writerow(data)
+
 if __name__=="__main__":
 	print("Test case.")
 	#t=get_num_rows('/home/fly/cs','399300.csv')
@@ -128,19 +134,23 @@ if __name__=="__main__":
 		#lst.append(temp)
 	#stat(lst)
 	#data=[]
+	codes=[]
 	#calendar=[None]+get_date('/home/fly/cs/399300.csv')
 	#print(calendar)
 	#data.append(calendar)
-	#for each in os.listdir('/home/fly/cs/data'):
-		#if get_num_rows('/home/fly/cs/data',each)>2400:
+	for each in os.listdir('/home/fly/cs/data'):
+		if get_num_rows('/home/fly/cs/data',each)>2400:
 			#fd=data_filling(each)
 			#data.append(fd)
+			code,ext=os.path.splitext(each)
+			codes.append(code)
+	save_csv('/home/fly/cs/codes.csv',codes)
 	#savef('/home/fly/cs/close.csv',data)
-	calendar=get_date('/home/fly/cs/399300.csv')[1:]
+	#calendar=get_date('/home/fly/cs/399300.csv')[1:]
 	#tc=[None]+calendar
 	#logs=[tc]
 	#close=np.loadtxt('/home/fly/cs/close.csv',delimiter=',',skiprows=1,usecols=range(1,2436))
-	code=np.loadtxt('/home/fly/cs/close.csv',delimiter=',',skiprows=1,usecols=0,dtype=str)
+	#code=np.loadtxt('/home/fly/cs/close.csv',delimiter=',',skiprows=1,usecols=0,dtype=str)
 	#print("get stock close price success")
 	#for i in range(0,len(close)):
 		#log=logearn(close[i])
@@ -148,17 +158,17 @@ if __name__=="__main__":
 		#logs.append(tl)
 	#savef('/home/fly/cs/logearn.csv',logs)
 	#print("calclate logearn success")
-	loge=np.loadtxt('/home/fly/cs/logearn.csv',delimiter=',',skiprows=1,usecols=range(1,2435))
-	for d in range(0,len(calendar),5):
-		temp=[]
-		if d+10<len(calendar):
-			for row in loge:
-				if 0 not in row[d:d+10]:
-					temp.append(row[d:d+10])
-				else:
-					temp.append([0,0,0,0,0,0,0,0,0,0])
-			pearson=np.corrcoef(temp)
-			path=os.path.join('/home/fly/cs/time',calendar[d+5]+'.csv')
-			savef(path,pearson)
-			print("calculate "+calendar[d+5]+" pearson success")
+	#loge=np.loadtxt('/home/fly/cs/logearn.csv',delimiter=',',skiprows=1,usecols=range(1,2435))
+	#for d in range(0,len(calendar),5):
+		#temp=[]
+		#if d+10<len(calendar):
+			#for row in loge:
+				#if 0 not in row[d:d+10]:
+					#temp.append(row[d:d+10])
+				#else:
+					#temp.append([0,0,0,0,0,0,0,0,0,0])
+			#pearson=np.corrcoef(temp)
+			#path=os.path.join('/home/fly/cs/time',calendar[d+5]+'.csv')
+			#savef(path,pearson)
+			#print("calculate "+calendar[d+5]+" pearson success")
 	print("success")
