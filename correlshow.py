@@ -33,8 +33,7 @@ def heat_map(matrix,imgname,label):
     plt.show()
 
 if __name__=="__main__":
-    pearson=np.loadtxt('/home/fly/hs/000001.csv',delimiter=",")
-    #pearson=np.loadtxt('/home/fly/hs/000002.csv',delimiter=",")
+    pearson=np.loadtxt('/home/fly/hs/data/000001.csv',delimiter=",")
     label=[]
     label=['change','%chg','open','high','close','low','volume','turnover','ma5','ma10','ma20','v_ma5','v_ma10','v_ma20']
     heat_map(pearson,"/home/fly/hs/p1.png",label)
