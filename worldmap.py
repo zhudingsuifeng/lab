@@ -13,7 +13,7 @@ def excel_to_list(p,l):
     return d
 
 p='/home/fly/works/data.xlsx'
-plt.figure(figsize=(40,30))
+plt.figure(figsize=(12,9))
 m=Basemap(projection='merc',llcrnrlat=-80,urcrnrlat=80,llcrnrlon=-180,urcrnrlon=180)
 x=excel_to_list(p,[2])[1:]  #longitude经度latitude纬度
 x=[i[0] for i in x]
